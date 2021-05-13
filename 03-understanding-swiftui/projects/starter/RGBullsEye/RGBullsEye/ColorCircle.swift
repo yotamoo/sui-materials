@@ -39,7 +39,9 @@ struct ColorCircle: View {
   var body: some View {
     Circle()
       .fill(Color(red: rgb.red, green: rgb.green, blue: rgb.blue))
-      .frame(width: size, height: size)
+        .frame(width: size, height: size)
+        .northWestShadow()
+        .southEastShadow()
   }
 }
 
