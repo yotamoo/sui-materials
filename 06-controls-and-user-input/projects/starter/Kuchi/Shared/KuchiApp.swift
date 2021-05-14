@@ -36,7 +36,7 @@ import SwiftUI
 struct KuchiApp: App {
   var body: some Scene {
     WindowGroup {
-      WelcomeView()
+      RegisterView()
     }
   }
 }
