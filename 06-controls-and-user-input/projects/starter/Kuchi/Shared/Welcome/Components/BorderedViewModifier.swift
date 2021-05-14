@@ -32,61 +32,34 @@
 
 import SwiftUI
 
-struct RegisterView: View {
-    @EnvironmentObject var userManager: UserManager
-    @ObservedObject var keyboardHandler: KeyboardFollower
-    
-    var body: some View {
-        VStack {
-            Spacer()
-            WelcomeMessageView()
-            Group {
-                TextField("Type your name...",
-                          text: $userManager.profile.name)
-                    .bordered()
-            }.padding()
-            Button(action: self.registerUser, label: {
-                Text("OK")
-            })
-            Spacer()
-        }
-        .background(WelcomeBackgroundImage())
-        .padding(.bottom, keyboardHandler.keyboardHeight)
-        .edgesIgnoringSafeArea(
-            keyboardHandler.isVisible ? .bottom : []
-        )
-    }
-    
-    func registerUser() {
-      userManager.persistProfile()
+struct BorderedViewModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding(EdgeInsets(top: 8,
+                                leading: 16,
+                                bottom: 8,
+                                trailing: 16))
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(lineWidth: 2)
+                    .foregroundColor(.blue)
+            )
+            .shadow(color: Color.gray.opacity(0.4),
+                    radius: 3, x: 1, y: 2)
+        
     }
 }
 
-struct RegisterView_Previews: PreviewProvider {
-    static let user = UserManager(name: "yotam")
+extension View {
+    func bordered() -> some View {
+        modifier(BorderedViewModifier())
+    }
+}
+
+struct BorderedViewModifier_Previews: PreviewProvider {
     static var previews: some View {
-        RegisterView(keyboardHandler: KeyboardFollower())
-            .environmentObject(user)
+        Button("Button", action: {})
+            .modifier(BorderedViewModifier())
     }
-}
-
-struct KuchiTextStyle: TextFieldStyle {
-  public func _body(
-    configuration: TextField<Self._Label>) -> some View {
-      return configuration
-        .padding(EdgeInsets(top: 8,
-                            leading: 16,
-                            bottom: 8,
-                            trailing: 16))
-        .background(Color.white)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(lineWidth: 2)
-                .foregroundColor(.blue)
-        )
-        .shadow(color: Color.gray.opacity(0.4),
-                radius: 3,
-                x: 1,
-                y: 2)
-  }
 }
