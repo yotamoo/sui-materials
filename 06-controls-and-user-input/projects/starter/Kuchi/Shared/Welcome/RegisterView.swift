@@ -45,9 +45,27 @@ struct RegisterView: View {
                           text: $userManager.profile.name)
                     .bordered()
             }.padding()
-            Button(action: self.registerUser, label: {
-                Text("OK")
-            })
+            Button(action: self.registerUser) {
+                HStack {
+                    Image(systemName: "checkmark")
+                        .resizable()
+                        .frame(width: 16, height: 16, alignment: .center)
+                    Text("OK")
+                        .font(.body)
+                        .bold()
+                }
+            }
+            .disabled(!userManager.isUserNameValid())
+            .bordered()
+            HStack {
+                Spacer()
+                Toggle(isOn: $userManager.settings.rememberUser) {
+                    Text("Remember me")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+                .fixedSize()
+            }
             Spacer()
         }
         .background(WelcomeBackgroundImage())
@@ -58,8 +76,16 @@ struct RegisterView: View {
     }
     
     func registerUser() {
-      userManager.persistProfile()
+      if userManager.settings.rememberUser {
+        userManager.persistProfile()
+      } else {
+        userManager.clear()
+      }
+
+      userManager.persistSettings()
+      userManager.setRegistered()
     }
+
 }
 
 struct RegisterView_Previews: PreviewProvider {
@@ -71,22 +97,22 @@ struct RegisterView_Previews: PreviewProvider {
 }
 
 struct KuchiTextStyle: TextFieldStyle {
-  public func _body(
-    configuration: TextField<Self._Label>) -> some View {
-      return configuration
-        .padding(EdgeInsets(top: 8,
-                            leading: 16,
-                            bottom: 8,
-                            trailing: 16))
-        .background(Color.white)
-        .overlay(
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(lineWidth: 2)
-                .foregroundColor(.blue)
-        )
-        .shadow(color: Color.gray.opacity(0.4),
-                radius: 3,
-                x: 1,
-                y: 2)
-  }
+    public func _body(
+        configuration: TextField<Self._Label>) -> some View {
+        return configuration
+            .padding(EdgeInsets(top: 8,
+                                leading: 16,
+                                bottom: 8,
+                                trailing: 16))
+            .background(Color.white)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(lineWidth: 2)
+                    .foregroundColor(.blue)
+            )
+            .shadow(color: Color.gray.opacity(0.4),
+                    radius: 3,
+                    x: 1,
+                    y: 2)
+    }
 }
